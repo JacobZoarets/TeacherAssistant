@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>עוזר הוראה · לימוד לרישיון פנסיוני</title>
+<meta name="theme-color" content="#F5FAFE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="עוזר הוראה">
+<meta name="description" content="עוזר הוראה לרישיון סוכן ביטוח פנסיוני — סמני מה את יודעת ומה קשה, וקבלי שיעור מותאם.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%2316345C' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%237E2340'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#16345C;
+  --navy2:#24507F;
+  --blue:#3E6FA8;
+  --sky:#9CC3E8;
+  --sky-l:#EAF3FB;
+  --sky-xl:#F5FAFE;
+  --burg:#7E2340;
+  --burg-l:#A8566F;
+  --burg-xl:#F9EEF2;
+  --ink:#152A45;
+  --txt:#3C5471;
+  --mut:#7C93AC;
+  --faint:#A9BDD2;
+  --line:#DCE9F5;
+  --ok:#2F7D6B;
+  --sans:'Heebo','Assistant','Segoe UI',system-ui,Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;overflow:hidden;height:100dvh;
+  font-family:var(--sans);font-weight:300;color:var(--txt);
+  font-size:15.5px;line-height:1.7;-webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(70% 46% at 88% -8%, rgba(156,195,232,.42) 0%, rgba(156,195,232,0) 70%),
+    radial-gradient(56% 40% at -6% 8%, rgba(168,86,111,.14) 0%, rgba(168,86,111,0) 70%),
+    radial-gradient(80% 50% at 50% 112%, rgba(62,111,168,.16) 0%, rgba(62,111,168,0) 72%),
+    linear-gradient(170deg,#FDFEFF 0%,var(--sky-l) 100%);
+}
+h1,h2,h3,h4{margin:0;font-weight:300;color:var(--ink);letter-spacing:-.02em}
+p{margin:0}
+button{font-family:inherit;font-size:inherit;border:0;background:none;color:inherit;cursor:pointer;padding:0}
+a{color:var(--burg);text-decoration:none}
+.hidden{display:none!important}
+.eyebrow{font-size:10.5px;letter-spacing:.24em;font-weight:500;color:var(--burg-l)}
+.muted{color:var(--mut)}
+.tiny{font-size:12.5px;line-height:1.65}
+
+/* ================= app frame ================= */
+.app{height:100dvh;width:100%;min-width:0;display:flex;flex-direction:column;max-width:680px;margin:0 auto;
+  padding:max(16px,env(safe-area-inset-top)) 18px max(14px,env(safe-area-inset-bottom));gap:12px}
+
+
+/* ---------- header ---------- */
+.hd{flex:0 0 auto;padding:2px 4px 0;animation:drop .7s cubic-bezier(.2,.8,.2,1) backwards}
+.hd h1{font-size:21px;font-weight:500;color:var(--navy);letter-spacing:-.02em}
+.hd p{font-size:12.5px;color:var(--mut);margin-top:2px;line-height:1.6}
+
+/* ---------- prompt card (main) ---------- */
+.pcard{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+  background:rgba(255,255,255,.78);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.9);border-radius:28px;
+  box-shadow:0 24px 60px -30px rgba(22,52,92,.35), 0 2px 10px -4px rgba(22,52,92,.08);
+  padding:20px 20px 16px;animation:drop .7s .12s cubic-bezier(.2,.8,.2,1) backwards}
+.pcard .ph{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.pcard .ph h2{font-size:16.5px;font-weight:400}
+.pstat{display:flex;gap:6px;flex-wrap:wrap;flex:0 0 auto;margin-bottom:12px}
+.pstat span{font-size:11.5px;padding:4px 11px;border-radius:20px;background:var(--sky-l);
+  color:var(--navy2);font-weight:400;transition:.3s}
+.pstat span.warn{background:var(--burg-xl);color:var(--burg)}
+.pbox{flex:1 1 auto;min-height:0;overflow:hidden;position:relative;
+  font-size:13px;line-height:1.8;color:var(--txt);white-space:pre-wrap;
+  border-radius:18px;background:var(--sky-xl);padding:14px 16px;transition:.3s}
+.pbox:after{content:"";position:absolute;bottom:0;left:0;right:0;height:56px;
+  background:linear-gradient(to top,var(--sky-xl),transparent);border-radius:0 0 18px 18px;pointer-events:none}
+.pbox.full{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pbox.full:after{display:none}
+.pmore{flex:0 0 auto;align-self:center;margin-top:8px;font-size:12px;color:var(--blue);
+  padding:4px 14px;border-radius:16px;transition:.25s}
+.pmore:hover{color:var(--navy)}
+.pfoot{flex:0 0 auto;display:flex;gap:10px;margin-top:12px}
+.copybtn{flex:1;padding:14px 18px;border-radius:20px;font-size:15px;font-weight:500;color:#fff;
+  background:linear-gradient(135deg,var(--burg) 0%,#9C3557 60%,var(--burg-l) 100%);
+  box-shadow:0 14px 30px -14px rgba(126,35,64,.55);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.copybtn:hover{transform:translateY(-1px);box-shadow:0 18px 34px -14px rgba(126,35,64,.65)}
+.copybtn:active{transform:scale(.98)}
+.copybtn.ok{background:linear-gradient(135deg,var(--ok),#3E9682)}
+.editbtn{flex:0 0 auto;padding:14px 16px;border-radius:20px;font-size:13.5px;color:var(--navy);
+  background:rgba(255,255,255,.8);border:1px solid var(--line);transition:.25s}
+.editbtn:hover{border-color:var(--sky)}
+
+/* ---------- menu ---------- */
+.menu{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  animation:drop .7s .18s cubic-bezier(.2,.8,.2,1) backwards}
+.mbtn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 4px 10px;
+  border-radius:20px;background:rgba(255,255,255,.62);border:1px solid var(--line);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),background .25s,border-color .25s}
+.mbtn:hover{transform:translateY(-2px);border-color:var(--sky);background:rgba(255,255,255,.9)}
+.mbtn:active{transform:scale(.96)}
+.mbtn .ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--navy2),var(--blue));color:#fff;font-size:13px;font-weight:400}
+.mbtn:nth-child(2) .ic{background:linear-gradient(135deg,var(--blue),var(--sky))}
+.mbtn:nth-child(3) .ic{background:linear-gradient(135deg,var(--burg),var(--burg-l))}
+.mbtn:nth-child(4) .ic{background:linear-gradient(135deg,var(--navy),var(--navy2))}
+.mbtn .lb{font-size:11.5px;color:var(--txt);font-weight:400;white-space:nowrap}
+.mbtn .bd{font-size:10px;color:var(--faint)}
+
+/* ================= sheets ================= */
+.scrim{position:fixed;inset:0;background:rgba(22,52,92,.32);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;margin:0 auto;max-width:680px;
+  max-height:88dvh;display:flex;flex-direction:column;
+  background:linear-gradient(178deg,#FFFFFF 0%,var(--sky-xl) 100%);
+  border-radius:30px 30px 0 0;box-shadow:0 -18px 60px -20px rgba(22,52,92,.45);
+  transform:translateY(104%);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.sheet.on{transform:translateY(0)}
+.sh-grab{flex:0 0 auto;display:grid;place-items:center;padding:10px 0 2px}
+.sh-grab i{width:40px;height:4px;border-radius:4px;background:var(--line)}
+.sh-head{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:8px 22px 12px}
+.sh-head h3{flex:1;font-size:19px;font-weight:400}
+.sh-head .x{width:32px;height:32px;border-radius:50%;background:var(--sky-l);color:var(--navy2);
+  display:grid;place-items:center;font-size:15px;transition:.25s}
+.sh-head .x:hover{background:var(--sky)}
+.sh-sub{flex:0 0 auto;padding:0 22px 12px;font-size:13px;color:var(--mut);line-height:1.7}
+.sh-body{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:4px 22px calc(24px + env(safe-area-inset-bottom))}
+@keyframes drop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- read more ---------- */
+.rm{position:relative;max-height:66px;overflow:hidden;transition:max-height .4s cubic-bezier(.2,.8,.2,1)}
+.rm:after{content:"";position:absolute;bottom:0;left:0;right:0;height:34px;
+  background:linear-gradient(to top,#fff,transparent);pointer-events:none;transition:opacity .3s}
+.rm.open{max-height:900px}
+.rm.open:after{opacity:0}
+.rmbtn{font-size:12px;color:var(--blue);margin-top:5px;padding:2px 0;display:inline-block}
+
+/* ---------- exams & topics ---------- */
+.exrow{display:flex;flex-direction:column;gap:9px;margin-bottom:26px}
+.ex{text-align:right;padding:14px 18px;border:1px solid var(--line);border-radius:20px;
+  background:rgba(255,255,255,.8);transition:.3s cubic-bezier(.2,.8,.2,1)}
+.ex:hover{border-color:var(--sky)}
+.ex.on{border-color:var(--navy2);background:#fff;box-shadow:0 10px 26px -16px rgba(22,52,92,.35)}
+.ex .exn{font-size:15px;color:var(--ink);font-weight:400}
+.ex .exm{display:block;font-size:12px;color:var(--faint);margin-top:2px}
+.ex.on .exm{color:var(--blue)}
+.tgroup{margin-bottom:26px}
+.tgh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 4px 10px}
+.tgh .gn{font-size:10.5px;letter-spacing:.2em;color:var(--burg-l);font-weight:500}
+.tgh .gc{font-size:11.5px;color:var(--faint)}
+.tp{padding:13px 16px;margin-bottom:8px;border-radius:18px;background:rgba(255,255,255,.75);
+  border:1px solid var(--line);transition:.3s;animation:rise .4s cubic-bezier(.2,.8,.2,1) backwards}
+.tp .nm{font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:8px;font-weight:400}
+.tp.q .nm{color:var(--mut);font-weight:300}
+.lvrow{display:flex;gap:6px;flex-wrap:wrap}
+.lv{padding:5px 12px;border-radius:16px;font-size:11.5px;color:var(--mut);
+  border:1px solid var(--line);background:#fff;transition:.25s;white-space:nowrap}
+.lv:hover{border-color:var(--sky)}
+.lv.on{color:#fff;border-color:transparent;background:var(--navy2)}
+.lv.on[data-v="learning"]{background:var(--blue)}
+.lv.on[data-v="shaky"]{background:var(--burg)}
+.lv.on[data-v="solid"]{background:var(--ok)}
+.empty{font-size:13.5px;color:var(--faint);padding:20px 4px;line-height:1.8}
+
+/* ---------- choices ---------- */
+.choices{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.choice{text-align:right;padding:13px 17px;border:1px solid var(--line);border-radius:18px;
+  background:rgba(255,255,255,.75);transition:.3s cubic-bezier(.2,.8,.2,1)}
+.choice:hover{border-color:var(--sky)}
+.choice.on{border-color:var(--navy2);background:#fff;box-shadow:0 10px 24px -16px rgba(22,52,92,.3)}
+.choice .cn{font-size:14px;color:var(--ink);font-weight:400}
+.choice.on .cn:before{content:"✓ ";color:var(--burg);font-weight:500}
+.choice .cd{display:block;font-size:12px;color:var(--faint);margin-top:2px;line-height:1.6}
+textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:18px;
+  padding:15px 17px;font-family:inherit;font-weight:300;font-size:14px;line-height:1.8;
+  color:var(--txt);background:rgba(255,255,255,.85);resize:vertical;transition:.3s}
+textarea::placeholder{color:var(--faint)}
+textarea:focus{outline:none;border-color:var(--sky);background:#fff}
+.saved{font-size:12px;color:var(--ok);opacity:0;transition:.4s;margin-top:8px}
+.saved.on{opacity:1}
+
+/* ---------- history ---------- */
+.hstat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px}
+.hstat div{background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:18px;
+  padding:12px 6px;text-align:center}
+.hstat b{display:block;font-size:22px;font-weight:300;color:var(--navy);letter-spacing:-.02em}
+.hstat span{font-size:10.5px;color:var(--faint);letter-spacing:.06em}
+.stuck{font-size:13.5px;color:var(--txt);padding:11px 16px;margin-bottom:8px;
+  border-radius:16px;background:var(--burg-xl);line-height:1.7}
+.stuck b{color:var(--burg);font-weight:500}
+.logline{display:flex;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:13px}
+.logline:last-child{border-bottom:0}
+.logline .ld{flex:0 0 64px;color:var(--faint);font-size:11.5px;white-space:nowrap;padding-top:2px}
+.logline .lt{flex:1;color:var(--txt);line-height:1.6}
+.logline .lv2{color:var(--faint);font-size:12px}
+
+/* ---------- track & dates ---------- */
+.stage{margin-bottom:9px;border-radius:20px;background:rgba(255,255,255,.78);
+  border:1px solid var(--line);overflow:hidden;transition:.3s}
+.stage-top{display:flex;gap:13px;align-items:center;padding:14px 17px;cursor:pointer}
+.num{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  font-size:12px;font-weight:400;color:#fff;background:linear-gradient(135deg,var(--navy2),var(--blue))}
+.stage-ttl{flex:1;min-width:0}
+.stage-ttl h3{font-size:14.5px;font-weight:400}
+.stage-ttl .meta{font-size:11.5px;color:var(--faint);margin-top:1px}
+.chev{flex:0 0 auto;color:var(--faint);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.stage.open .chev{transform:rotate(180deg)}
+.stage-body{display:none;padding:2px 18px 16px;font-size:13.5px}
+.stage.open .stage-body{display:block;animation:rise .4s cubic-bezier(.2,.8,.2,1)}
+.stage-body ul{margin:0 0 12px;padding:0;list-style:none}
+.stage-body li{color:var(--txt);margin-bottom:7px;padding-inline-start:16px;position:relative;line-height:1.7}
+.stage-body li:before{content:"";position:absolute;inset-inline-start:2px;top:10px;width:5px;height:5px;border-radius:50%;background:var(--sky)}
+.stage-body b{font-weight:500;color:var(--ink)}
+.linkrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.linkbtn{font-size:12px;color:var(--navy2);background:var(--sky-l);border-radius:14px;padding:6px 13px;transition:.25s}
+.linkbtn:hover{background:var(--sky)}
+.dgroup{font-size:10.5px;letter-spacing:.2em;color:var(--burg-l);font-weight:500;margin:26px 4px 10px}
+.dtable{width:100%;border-collapse:separate;border-spacing:0 7px;font-size:13px}
+.dtable td{padding:11px 14px;background:rgba(255,255,255,.75);vertical-align:top;line-height:1.6}
+.dtable td:first-child{border-radius:0 16px 16px 0;white-space:nowrap;color:var(--navy);
+  font-size:12px;font-weight:500;width:78px}
+.dtable td:last-child{border-radius:16px 0 0 16px;color:var(--txt)}
+.dtable td .n{display:block;color:var(--faint);font-size:11.5px;margin-top:2px;line-height:1.6}
+.dtable tr.past{opacity:.45}
+.pill{font-size:10px;letter-spacing:.1em;font-weight:500;padding:2px 9px;border-radius:12px}
+.pill.rose{background:var(--burg-xl);color:var(--burg)}
+
+/* ---------- reference ---------- */
+.ntable{width:100%;border-collapse:separate;border-spacing:0 7px;font-size:13px}
+.ntable td{padding:11px 14px;background:rgba(255,255,255,.75);vertical-align:top;line-height:1.6}
+.ntable td:first-child{border-radius:0 16px 16px 0;color:var(--txt)}
+.ntable td:last-child{border-radius:16px 0 0 16px;text-align:left;white-space:nowrap;
+  color:var(--navy);font-weight:500;font-size:13.5px;padding-inline-start:14px}
+.ntable td .h{display:block;font-size:11.5px;color:var(--faint);margin-top:2px;line-height:1.6}
+.frm{padding:15px 17px;margin-bottom:9px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid var(--line)}
+.frm h4{font-size:14px;font-weight:400;color:var(--ink)}
+.frm .eq{font-size:13.5px;color:var(--navy);background:var(--sky-l);border-radius:14px;padding:10px 14px;margin:9px 0;line-height:1.7}
+.frm p{font-size:12.5px;color:var(--mut);line-height:1.75}
+.filters{display:flex;flex-wrap:wrap;gap:7px;padding:4px 2px 12px;margin-bottom:0;flex:0 0 auto;width:100%;max-width:100%;min-width:0}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:6px 14px;border-radius:16px;font-size:12px;color:var(--mut);
+  border:1px solid var(--line);background:#fff;white-space:nowrap;transition:.25s}
+.chip.on{background:var(--navy2);border-color:var(--navy2);color:#fff}
+.fc{margin-bottom:8px;border-radius:18px;background:rgba(255,255,255,.75);border:1px solid var(--line);overflow:hidden}
+.fc-q{display:flex;align-items:center;gap:11px;padding:13px 16px;cursor:pointer}
+.fc-q .dot{width:6px;height:6px;border-radius:50%;background:var(--sky);flex:0 0 6px}
+.fc-q .t{flex:1;font-size:14px;color:var(--ink);font-weight:400;line-height:1.5}
+.fc-q .cat{display:block;font-size:10.5px;color:var(--faint);letter-spacing:.1em;margin-top:2px;font-weight:300}
+.fc-a{display:none;padding:0 16px 14px;font-size:13px;color:var(--txt);line-height:1.8}
+.fc.open .fc-a{display:block;animation:rise .35s cubic-bezier(.2,.8,.2,1)}
+.fc-a .hi{color:var(--navy);font-weight:500}
+.note{font-size:12px;line-height:1.75;color:var(--mut);background:rgba(255,255,255,.6);
+  border-radius:16px;padding:13px 16px;margin-top:18px}
+.note b{font-weight:500;color:var(--txt)}
+.reset{font-size:11.5px;color:var(--faint);margin:18px auto 0;display:block;text-align:center}
+.reset:hover{color:var(--mut)}
+
+@media(min-width:640px){
+  .menu{gap:10px}
+  .mbtn .lb{font-size:12.5px}
+  .pbox{font-size:13.5px}
+}
+@media(max-height:700px){
+  .livewrap{min-height:70px}
+}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.cloudwrap{flex:1.15 1 0;min-height:0;min-width:0;max-width:100%;display:flex;flex-direction:column;
+  animation:drop .7s .07s cubic-bezier(.2,.8,.2,1) backwards}
+.cloud{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-wrap:wrap;gap:9px;align-content:flex-start;padding:10px 2px 16px}
+.tag{padding:7px 15px;border-radius:18px;font-size:13px;font-weight:400;
+  background:rgba(255,255,255,.85);border:1px solid var(--line);color:var(--txt);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),background .3s,color .3s,border-color .3s,box-shadow .3s;
+  animation:rise .5s cubic-bezier(.2,.8,.2,1) backwards}
+.tag:hover{transform:translateY(-1px);border-color:var(--sky)}
+.tag:active{transform:scale(.94)}
+.tag.g{background:linear-gradient(135deg,#2F7D6B,#3E9682);border-color:transparent;color:#fff;
+  box-shadow:0 8px 18px -10px rgba(47,125,107,.55)}
+.tag.r{background:linear-gradient(135deg,var(--burg),#A03A57);border-color:transparent;color:#fff;
+  box-shadow:0 8px 18px -10px rgba(126,35,64,.55)}
+.legend{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 4px 6px;font-size:11.5px;color:var(--mut);min-width:0}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;margin-inline-end:5px;vertical-align:-1px}
+.legend .lg i{background:linear-gradient(135deg,#2F7D6B,#3E9682)}
+.legend .lr i{background:linear-gradient(135deg,var(--burg),#A03A57)}
+.legend .ln i{background:#fff;border:1px solid var(--line)}
+.bar{flex:0 0 auto;display:flex;gap:9px;animation:drop .7s .14s cubic-bezier(.2,.8,.2,1) backwards}
+.livewrap{flex:1 1 0;min-height:86px;display:flex;flex-direction:column;
+  background:rgba(255,255,255,.78);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.9);border-radius:22px;padding:12px 16px 13px;
+  box-shadow:0 14px 38px -24px rgba(22,52,92,.35);
+  animation:drop .7s .08s cubic-bezier(.2,.8,.2,1) backwards}
+.liveh{flex:0 0 auto;display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:7px}
+.livebox{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  font-size:12.5px;line-height:1.8;color:var(--txt);white-space:pre-wrap;
+  border-radius:14px;background:var(--sky-xl);padding:11px 14px}
+.livebox .flash{animation:flashIn .6s ease}
+@keyframes flashIn{from{background:rgba(126,35,64,.10)}to{background:transparent}}
+.livebox .seg{display:block;border-radius:8px;padding:1px 4px;margin:0 -4px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="hd">
+    <h1>עוזר הוראה</h1>
+    <p>סמני מה את כבר יודעת ומה עוד קשה — ותקבלי שיעור מותאם בדיוק לך</p>
+  </header>
+
+
+
+
+
+  <div class="cloudwrap">
+    <div class="legend">
+      <span class="lg"><i></i>שולטת</span>
+      <span class="lr"><i></i>מתקשה</span>
+      <span class="ln"><i></i>טרם סומן</span>
+      <span style="flex:1"></span>
+      <span id="cloudCount"></span>
+    </div>
+    <div class="filters" id="cFilters"></div>
+    <div class="cloud" id="cloud"></div>
+  </div>
+
+  <div class="livewrap">
+    <div class="liveh"><span class="eyebrow">הפרומפט שלך</span><span class="tiny muted" id="liveLen"></span></div>
+    <div class="livebox" id="liveBox"></div>
+  </div>
+
+  <div class="bar">
+    <button class="copybtn" id="copyBtn">העתקת הבקשה</button>
+    <button class="editbtn" data-sheet="session">העדפות</button>
+  </div>
+
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="sheet" id="sh-session">
+  <div class="sh-grab"><i></i></div>
+  <div class="sh-head"><h3>העדפות כלליות</h3><button class="x" data-close>✕</button></div>
+  <div class="sh-sub">מה את רוצה מהשיחה הקרובה, איך ללמוד, ומה עוד חשוב שהעוזר יידע.</div>
+  <div class="sh-body">
+    <div class="eyebrow" style="display:block;margin:4px 4px 12px">מה לעשות בשיחה הזו</div>
+    <div class="choices" id="wantRow"></div>
+    <div class="eyebrow" style="display:block;margin:0 4px 12px">איך ללמד אותי</div>
+    <div class="choices" id="styleRow"></div>
+    <div class="eyebrow" style="display:block;margin:0 4px 10px">משהו נוסף שחשוב שיידע</div>
+    <textarea id="notes" placeholder="למשל: יש לי חצי שעה ביום, ואני לומדת לקראת מועד דצמבר…"></textarea>
+    <div class="saved" id="savedMsg">נשמר</div>
+    <button class="reset" id="resetBtn">איפוס כל הסימונים</button>
+  </div>
+</div>
+
+<script>
+const CONCEPTS=[
+ /* --- חוזה ביטוח ודינים --- */
+ {c:"חוזה ביטוח",t:"מקרה הביטוח",d:"המוות, הנזק או האירוע שקרותו מחייב את המבטח בתשלום תגמולי ביטוח. כל הפוליסה נבנית סביב ההגדרה הזו — ולכן <span class='hi'>ההגדרה בפוליסה היא לב הסכסוך</span> בכמעט כל תביעה."},
+ {c:"חוזה ביטוח",t:"חוק קוגנטי",d:"חוק חוזה הביטוח, תשמ\"א-1981 הוא <span class='hi'>קוגנטי לטובת המבוטח</span>: אי אפשר להתנות עליו בהסכם לרעת המבוטח או המוטב. תנאי בפוליסה שסותר את החוק לרעת המבוטח — בטל."},
+ {c:"חוזה ביטוח",t:"חובת הגילוי",d:"המבוטח חייב לתת תשובות מלאות וכנות לשאלות המבטח בעניין מהותי. הפרה מסוגים שונים מובילה לתוצאות שונות: <span class='hi'>הפחתה יחסית של התגמולים או פטור מלא</span> של המבטח — תלוי אם מבטח סביר היה מתקשר בחוזה בכלל."},
+ {c:"חוזה ביטוח",t:"עניין מהותי",d:"עניין שיש בו השפעה על נכונותו של מבטח סביר לכרות את החוזה או על תנאיו. מה שנשאל עליו במפורש בהצעת הביטוח — <span class='hi'>נחשב מהותי</span>."},
+ {c:"חוזה ביטוח",t:"מועד תשלום תגמולים",d:"תגמולי הביטוח משולמים <span class='hi'>תוך 30 יום</span> מהיום שהיו בידי המבטח המידע והמסמכים הדרושים לבירור החבות. סכומים שאינם במחלוקת ישולמו תוך 30 יום מהגשת התביעה, גם אם השאר עוד נבדק."},
+ {c:"חוזה ביטוח",t:"התיישנות",d:"תקופת ההתיישנות של תביעה לתגמולי ביטוח היא <span class='hi'>שלוש שנים</span> ממועד קרות מקרה הביטוח — קצרה מההתיישנות הרגילה של שבע שנים."},
+ {c:"חוזה ביטוח",t:"ביטוח חסר",d:"סכום הביטוח נמוך משווי הנכס. התגמולים מופחתים <span class='hi'>ביחס שבין סכום הביטוח לשווי</span> (פרו רטה) — גם בנזק חלקי."},
+ {c:"חוזה ביטוח",t:"ביטוח יתר",d:"סכום הביטוח גבוה משווי הנכס. המבוטח לא יקבל יותר מהנזק בפועל, וכל צד רשאי לדרוש הפחתה של סכום הביטוח והפרמיה — <span class='hi'>אין רווח מביטוח</span>."},
+ {c:"חוזה ביטוח",t:"ביטוח כפל",d:"אותו נכס בוטח אצל יותר ממבטח אחד לאותו סיכון ולאותה תקופה. כלפי המבוטח המבטחים חייבים <span class='hi'>יחד ולחוד עד גובה הנזק</span>, ובינם לבין עצמם נושאים בנזק ביחס שבין סכומי הביטוח."},
+ {c:"חוזה ביטוח",t:"עקרון השיפוי",d:"בביטוח נזקים התגמולים מיועדים <span class='hi'>להשיב את המבוטח למצבו לפני הנזק</span> — לא להעשירו. בביטוח חיים לעומת זאת נקבע סכום מוסכם מראש שאינו תלוי בנזק."},
+ {c:"חוזה ביטוח",t:"תחלוף (סוברוגציה)",d:"לאחר ששילם תגמולים, המבטח נכנס לנעלי המבוטח וזכאי לתבוע את המזיק. המבוטח לא יכול להתפשר עם המזיק ולפגוע בזכות זו."},
+ {c:"חוזה ביטוח",t:"מרמה בתביעת תגמולים",d:"מבוטח שמסר עובדות כזב או העלים עובדות ביודעין בכוונה לקבל תגמולים שאינם מגיעים — <span class='hi'>המבטח פטור מחבותו</span> כליל."},
+ {c:"חוזה ביטוח",t:"מקרה שנגרם במתכוון",d:"נגרם מקרה הביטוח בכוונה על ידי המבוטח או המוטב — המבטח פטור מחבות. רשלנות, לעומת זאת, אינה שוללת כשלעצמה את הכיסוי."},
+ {c:"חוזה ביטוח",t:"החמרת סיכון",d:"שינוי מהותי בסיכון לאחר כריתת החוזה מחייב הודעה למבטח. המבטח רשאי לבטל את החוזה או לדרוש פרמיה מותאמת; אי־הודעה עשויה להפחית את התגמולים."},
+ {c:"חוזה ביטוח",t:"תקופת אכשרה",d:"תקופה מתחילת הביטוח שבמהלכה אין כיסוי או שהכיסוי מוגבל. בקרן פנסיה, למשל, קיימת תקופת אכשרה לגבי <span class='hi'>מחלה שקדמה להצטרפות</span> — ולכן לרציפות הביטוח יש ערך אמיתי."},
+ {c:"חוזה ביטוח",t:"מוטב",d:"מי שזכאי לתגמולי הביטוח. בביטוח חיים ניתן לקבוע מוטב ולשנותו בהודעה למבטח; <span class='hi'>קביעת מוטב עוקפת את דיני הירושה</span> לגבי אותם כספים."},
+ {c:"חוזה ביטוח",t:"חוק החוזים האחידים",d:"פוליסת ביטוח היא חוזה אחיד. תנאי מקפח בחוזה אחיד — <span class='hi'>בית משפט או בית הדין לחוזים אחידים רשאי לבטלו או לשנותו</span>."},
+
+ /* --- פנסיה וגמל --- */
+ {c:"פנסיה וגמל",t:"קרן פנסיה חדשה מקיפה",d:"מוצר הפנסיה המרכזי בישראל. כולל <span class='hi'>שלושה כיסויים יחד</span>: קצבת זקנה, פנסיית נכות (אובדן כושר עבודה) ופנסיית שאירים. ההפקדה החודשית מוגבלת ל־20.5% מפעמיים השכר הממוצע במשק."},
+ {c:"פנסיה וגמל",t:"קרן פנסיה כללית",d:"קרן ללא מנגנון הבטחת תשואה וללא תקרת הפקדה של הקרן המקיפה, ובדרך כלל ללא כיסויים ביטוחיים. משמשת בעיקר <span class='hi'>לשכר גבוה מהתקרה</span> או להפקדות חד־פעמיות."},
+ {c:"פנסיה וגמל",t:"קרן פנסיה ותיקה",d:"קרנות שנסגרו למצטרפים חדשים ב־1995. זכויות העמיתים נקבעות בתקנון הקרן, ובקרנות הגירעוניות — לפי ההסדר שנקבע בהסכם ההבראה עם המדינה."},
+ {c:"פנסיה וגמל",t:"תקנון אחיד",d:"מ־2018 חלה על כל קרנות הפנסיה החדשות תקנון אחיד — <span class='hi'>אותן זכויות ואותם כללים בכל הקרנות</span>. ההבדל בין קרנות עבר בעיקר לדמי ניהול, תשואה ושירות."},
+ {c:"פנסיה וגמל",t:"מנגנון הבטחת תשואה",d:"אג\"ח מיועדות בוטלו בשלהי 2022 והוחלפו במנגנון להבטחת תשואה לקרנות הפנסיה. המטרה נשארה: <span class='hi'>הגנה חלקית על החוסך מפני תנודתיות</span>, במיוחד בגילים המבוגרים."},
+ {c:"פנסיה וגמל",t:"מסלולי השקעה תלויי גיל",d:"ברירת המחדל בקרנות: מסלול לפי גיל החוסך (עד 50, 50–60, 60+), עם ירידה בחשיפה לנכסי סיכון עם ההתקרבות לפרישה."},
+ {c:"פנסיה וגמל",t:"מקדם המרה",d:"המספר שבו מחלקים את הצבירה כדי לקבל את הקצבה החודשית. משקף תוחלת חיים, גיל פרישה, מסלול שאירים ותשואה מוערכת. <span class='hi'>מקדם גבוה = קצבה נמוכה</span>."},
+ {c:"פנסיה וגמל",t:"מקדם מובטח",d:"בפוליסות ביטוח מנהלים מסוימות שנמכרו בעבר הובטח המקדם מראש. בקרן פנסיה המקדם <span class='hi'>אינו מובטח</span> ומתעדכן — זה אחד ההבדלים המשמעותיים בין המוצרים."},
+ {c:"פנסיה וגמל",t:"פנסיית נכות",d:"קצבה חודשית לעמית שאיבד את כושר עבודתו, בשיעור שנקבע בתקנון (עד כ־75% מהשכר המבוטח), בהתאם לדרגת הנכות שנקבעה."},
+ {c:"פנסיה וגמל",t:"פנסיית שאירים",d:"קצבה לבן/בת הזוג ולילדים עד גיל 21 במות העמית. עמית ללא שאירים יכול לבחור מסלול <span class='hi'>ללא כיסוי שאירים</span> ולשלם פחות עלות ביטוחית."},
+ {c:"פנסיה וגמל",t:"ניוד כספים",d:"מעבר בין קופות וקרנות בלי אירוע מס ובלי פגיעה בוותק. <span class='hi'>כספי קצבה נשארים כספי קצבה</span> — אי אפשר לנייד אותם למסלול הוני."},
+ {c:"פנסיה וגמל",t:"קופת גמל לקצבה",d:"קופה שהכספים בה מיועדים לקצבה בגיל פרישה. משיכה שלא כדין ממנה חייבת <span class='hi'>מס בשיעור 35%</span> או שיעור המס השולי — הגבוה מביניהם."},
+ {c:"פנסיה וגמל",t:"קופת גמל להשקעה",d:"מוצר חיסכון נזיל בכל עת, עם תקרת הפקדה שנתית לכל מוטב. מגיל 60 ניתן להמיר את הכספים ל<span class='hi'>קצבה מוכרת פטורה ממס</span> — ההטבה המרכזית שלה."},
+ {c:"פנסיה וגמל",t:"קרן השתלמות",d:"אפיק החיסכון היחיד שבו <span class='hi'>הרווחים פטורים ממס רווחי הון</span> עד תקרה. נזילה לאחר שש שנים, ולאחר שלוש שנים לצורך השתלמות או למי שהגיע לגיל פרישה."},
+ {c:"פנסיה וגמל",t:"רצף פיצויים",d:"במקום למשוך פיצויים בעת סיום עבודה, משאירים אותם בקופה לטובת המשך עבודה או להמרה לקצבה. <span class='hi'>דוחה את אירוע המס</span> ושומר על הפטור העתידי."},
+ {c:"פנסיה וגמל",t:"רצף קצבה",d:"ייעוד כספי הפיצויים לקצבה בגיל פרישה במקום למשוך אותם. הבחירה הזו משפיעה ישירות על גובה הפטור על הקצבה בעתיד."},
+ {c:"פנסיה וגמל",t:"היוון קצבה",d:"המרת חלק מהקצבה לסכום חד־פעמי. אפשרי <span class='hi'>רק למי שצבר קצבה מזערית</span> (5,306 ₪ ב־2026) ובכפוף ליתרת ההון הפטורה."},
+ {c:"פנסיה וגמל",t:"עמית מוטב",d:"יחיד שהופקדו בעדו בשנת המס לקופת גמל לקצבה לפחות 16% מהשכר הממוצע במשק. המעמד הזה <span class='hi'>מגדיל את תקרות ההטבה</span> בהפקדות."},
+ {c:"פנסיה וגמל",t:"פנסיה תקציבית מול מצטברת",d:"תקציבית — הקצבה מחושבת כאחוז מהשכר האחרון לפי שנות עבודה, ומשולמת מתקציב המעסיק. מצטברת — הקצבה נגזרת <span class='hi'>מהצבירה בפועל</span> חלקי מקדם."},
+
+ /* --- מיסוי --- */
+ {c:"מיסוי",t:"זיכוי מס (סעיף 45א)",d:"זיכוי בשיעור <span class='hi'>35%</span> מסכום ההפקדה המוכרת — כלומר הקטנת המס לשלם. לשכיר: על הפקדה עד 7% מההכנסה המזכה, בתקרה של 9,700 ₪ לחודש."},
+ {c:"מיסוי",t:"ניכוי מס (סעיף 47)",d:"הפחתת ההפקדה מההכנסה החייבת. רלוונטי בעיקר לעצמאים — ניכוי של עד 11% מההכנסה המזכה, בנוסף לזיכוי על 5.5% — <span class='hi'>יחד 16.5%</span>."},
+ {c:"מיסוי",t:"הכנסה מזכה",d:"ההכנסה שבגינה מחשבים את הטבות המס על ההפקדה, עד תקרה שמתעדכנת בכל שנה. חשוב להבחין בין הכנסת עבודה להכנסה שאינה מעבודה — <span class='hi'>התקרות שונות</span>."},
+ {c:"מיסוי",t:"קצבה מזכה",d:"קצבה המשולמת מכספים שההפקדה בגינם <span class='hi'>נהנתה מהטבת מס</span>. חלקה פטור לפי שיעור הפטור השנתי (57.5% ב־2026) מתוך תקרת הקצבה המזכה, והשאר חייב במס."},
+ {c:"מיסוי",t:"קצבה מוכרת",d:"קצבה המשולמת מכספים שההפקדה בגינם <span class='hi'>לא זכתה להטבת מס</span> — ולכן היא פטורה ממס. זה הרציונל של המרת קופת גמל להשקעה לקצבה מגיל 60."},
+ {c:"מיסוי",t:"נוסחת השילוב",d:"מי שמשך כספי פיצויים פטורים ממס במהלך הדרך — <span class='hi'>הפטור העתידי על הקצבה שלו נשחק</span>. זו הסיבה שמשיכת פיצויים בסיום עבודה היא החלטה עם מחיר עתידי."},
+ {c:"מיסוי",t:"קיבוע זכויות",d:"טופס 161ד — הבקשה שבה הפורש קובע כיצד לנצל את הפטור על הקצבה ואת יתרת ההון הפטורה. <span class='hi'>מוגש בגיל פרישה</span> וההשפעה שלו לכל החיים."},
+ {c:"מיסוי",t:"זקיפת הכנסה בגין הפקדות מעסיק",d:"הפקדות מעסיק לתגמולים מעל 7.5% משכר של פי 2.5 מהשכר הממוצע במשק נזקפות כהכנסה חייבת בידי העובד — <span class='hi'>ה\"מס על הפנסיה\" של בעלי שכר גבוה</span>."},
+ {c:"מיסוי",t:"משיכה שלא כדין",d:"משיכת כספי קצבה לפני גיל הזכאות ובלא עמידה בתנאים — מס של 35% או המס השולי, לפי הגבוה. יש חריגים (מצב רפואי, יתרה צבורה נמוכה)."},
+ {c:"מיסוי",t:"פריסת פיצויים",d:"פריסה קדימה של מס על פיצויים חייבים על פני עד שש שנים (שנה לכל ארבע שנות עבודה), כדי <span class='hi'>להפחית את שיעור המס השולי</span>."},
+
+ /* --- ביטוח לאומי --- */
+ {c:"ביטוח לאומי",t:"ענפי הביטוח הלאומי",d:"זקנה ושאירים, נכות כללית, נפגעי עבודה, אימהות, ילדים, אבטלה, זכויות עובדים בפשיטת רגל, סיעוד ועוד. <span class='hi'>הרובד הראשון</span> של הביטחון הסוציאלי בישראל."},
+ {c:"ביטוח לאומי",t:"שלושת הרבדים",d:"רובד ראשון — ביטוח לאומי; רובד שני — פנסיה חובה וחיסכון פנסיוני; רובד שלישי — חיסכון פרטי משלים. <span class='hi'>מבנה התשובה כמעט לכל שאלה מערכתית</span>."},
+ {c:"ביטוח לאומי",t:"דמי פגיעה",d:"תשלום לנפגע בעבודה בגין תקופת אי־כושר, בשיעור 75% מהשכר של שלושת החודשים שקדמו לפגיעה, לתקופה מוגבלת ובכפוף לתקרה."},
+ {c:"ביטוח לאומי",t:"נכות כללית מול נכות מעבודה",d:"נכות כללית — ליקוי שאינו נובע מהעבודה, נבחנת גם באובדן כושר להשתכר. נכות מעבודה — נובעת מפגיעה בעבודה, ומזכה בדרגת נכות ובגמלה נפרדת."},
+ {c:"ביטוח לאומי",t:"גיל זכאות מול גיל פרישה",d:"גיל הפרישה הוא הגיל שממנו ניתן לקבל קצבת זקנה בכפוף להכנסות; גיל הזכאות המוחלט הוא הגיל שממנו הקצבה משולמת ללא תלות בהכנסה. גיל הפרישה לאישה <span class='hi'>עולה בהדרגה</span> — כדאי לבדוק את הטבלה המעודכנת."},
+
+ /* --- רגולציה ואתיקה --- */
+ {c:"רגולציה",t:"שלושת סוגי הרישיון הפנסיוני",d:"<span class='hi'>יועץ פנסיוני</span> — ייעוץ ללא זיקה לגוף מוסדי, נאסר עליו לקבל עמלות מהיצרן; <span class='hi'>סוכן שיווק פנסיוני</span> ו<span class='hi'>סוכן ביטוח פנסיוני</span> — פועלים בזיקה לגוף מוסדי ומקבלים עמלות, בגילוי נאות."},
+ {c:"רגולציה",t:"חובת האמון והזהירות",d:"בעל רישיון חייב לפעול בנאמנות ובשקידה לטובת הלקוח, לא להעדיף עניין אחר על ענייני הלקוח, ולתת עצה מקצועית המבוססת על צרכיו — <span class='hi'>גם אם היא פחות משתלמת לו</span>."},
+ {c:"רגולציה",t:"בירור צרכי הלקוח",d:"לפני מתן שירות יש לברר את צרכי הלקוח, מצבו הכספי, גילו, מצבו התעסוקתי והמשפחתי, וכל נתון רלוונטי — ולתעד. <span class='hi'>בסיס ההמלצה חייב להיות מתועד</span>."},
+ {c:"רגולציה",t:"גילוי נאות",d:"חובה לגלות ללקוח את הזיקה לגוף מוסדי, את העמלות הצפויות ואת קיומו של ניגוד עניינים אפשרי — לפני ביצוע העסקה."},
+ {c:"רגולציה",t:"גוף מוסדי",d:"חברת ביטוח או חברה מנהלת של קופת גמל או קרן פנסיה. הגוף המנהל את כספי החוסכים ונתון לפיקוח <span class='hi'>רשות שוק ההון, ביטוח וחיסכון</span>."},
+ {c:"רגולציה",t:"מסלקה פנסיונית",d:"מערכת מרכזית שדרך מאפשרת לבעל רישיון לקבל, בהרשאת הלקוח, תמונת מצב מלאה של כל החסכונות הפנסיוניים שלו — הבסיס לייעוץ אמיתי."},
+ {c:"רגולציה",t:"דמי ניהול",d:"מגבוה ההפקדה ומהצבירה, בכפוף לתקרות שנקבעו בתקנות. <span class='hi'>אחוז אחד בדמי ניהול מצבירה יכול לשנות עשרות אחוזים בקצבה</span> לאורך עשרות שנים."},
+
+ /* --- מימון וכלכלה --- */
+ {c:"מימון",t:"ערך הזמן של הכסף",d:"שקל היום שווה יותר משקל מחר. כל תמחור של קצבה, אג\"ח או פרמיה נשען על היוון תזרימים עתידיים לערך נוכחי."},
+ {c:"מימון",t:"סטיית תקן",d:"מדד לפיזור התשואות סביב הממוצע — <span class='hi'>מדד הסיכון הבסיסי</span> של נכס. סטייה גבוהה = תנודתיות גבוהה."},
+ {c:"מימון",t:"בטא",d:"מודד את הרגישות של נכס לתנועות השוק — הסיכון <span class='hi'>השיטתי</span>, זה שאי אפשר לפזר. בטא 1.2 = תנודתיות של 20% מעל השוק."},
+ {c:"מימון",t:"פיזור",d:"שילוב נכסים בעלי מקדם מתאם נמוך מקטין את סיכון התיק בלי לפגוע בהכרח בתשואה הצפויה. <span class='hi'>הארוחה החינמית היחידה במימון</span>."},
+ {c:"מימון",t:"מח\"מ (משך חיים ממוצע)",d:"הזמן הממוצע המשוקלל לקבלת תזרימי האג\"ח, וגם מדד לרגישות מחיר האג\"ח לשינוי בריבית. <span class='hi'>מח\"מ ארוך = רגישות גבוהה</span>."},
+ {c:"מימון",t:"קשר מחיר–תשואה באג\"ח",d:"יחס הופכי: כשהריבית בשוק עולה, מחיר האג\"ח יורד, והתשואה לפדיון עולה. ולהיפך."},
+ {c:"מימון",t:"NPV ו־IRR",d:"NPV — סך התזרימים המהוונים בניכוי ההשקעה; חיובי = כלכלי. IRR — שיעור ההיוון שבו ה־NPV שווה אפס, כלומר <span class='hi'>התשואה הפנימית</span> של הפרויקט."},
+ {c:"מימון",t:"תשואה נומינלית מול ריאלית",d:"ריאלית מנטרלת את האינפלציה. בחיסכון פנסיוני לטווח של 40 שנה — <span class='hi'>רק התשואה הריאלית משמעותית</span>."}
+];
+const WANTS=[
+ {k:"explain",n:"להסביר לי מהיסוד",d:"מושג אחרי מושג, בעברית פשוטה, עם דוגמה מהחיים"},
+ {k:"test",n:"לבנות לי מבחן תרגול",d:"שאלות אמריקאיות בפורמט הבחינה, עם הסבר אחרי כל תשובה"},
+ {k:"calc",n:"לתרגל איתי חישובים",d:"פיצויים, פטור על קצבה, ביטוח חסר — צעד־צעד"},
+ {k:"review",n:"חזרה מהירה",d:"תמצית ממוקדת של מה שחייבים לזכור"}
+];
+const STYLES=[
+ {k:"short",n:"קצר וממוקד",d:"בלי הקדמות, ישר לעיקר"},
+ {k:"deep",n:"לעומק",d:"להבין את ההיגיון, לא רק לשנן"},
+ {k:"examples",n:"הרבה דוגמאות מספריות",d:"כל כלל עם תרגיל שמדגים אותו"},
+ {k:"quiz",n:"לעצור ולשאול אותי",d:"לבדוק שהבנתי לפני שממשיכים"},
+ {k:"strict",n:"לא להחמיא סתם",d:"לומר לי ישר כשטעיתי ולתקן"}
+];
+
+const KEY="pension_cloud_v1";
+let S={tag:{},want:{},style:{},notes:""};
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(S,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const TAGS=CONCEPTS.map(c=>({t:c.t,c:c.c}));
+const DAY=864e5;
+
+/* ---------- sheets ---------- */
+const scrim=document.getElementById("scrim");
+function openSheet(id){
+  closeSheet();
+  const el=document.getElementById("sh-"+id);if(!el)return;
+  el.classList.add("on");scrim.classList.add("on");
+}
+function closeSheet(){
+  document.querySelectorAll(".sheet.on").forEach(s=>s.classList.remove("on"));
+  scrim.classList.remove("on");refresh();
+}
+scrim.addEventListener("click",closeSheet);
+document.querySelectorAll("[data-sheet]").forEach(b=>b.addEventListener("click",()=>openSheet(b.dataset.sheet)));
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheet));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
+
+/* ---------- cloud ---------- */
+let cFilter="הכל";
+function renderFilters(){
+  const cats=["הכל",...new Set(TAGS.map(t=>t.c))];
+  document.getElementById("cFilters").innerHTML=cats.map(c=>
+    `<button class="chip${c===cFilter?" on":""}" data-c="${c}">${c}</button>`).join("");
+}
+document.getElementById("cFilters").addEventListener("click",e=>{
+  const b=e.target.closest(".chip");if(!b)return;
+  cFilter=b.dataset.c;renderFilters();renderCloud();
+});
+function renderCloud(){
+  const list=TAGS.filter(t=>cFilter==="הכל"||t.c===cFilter);
+  document.getElementById("cloud").innerHTML=list.map((t,i)=>{
+    const v=S.tag[t.t]||"";
+    return `<button class="tag ${v}" data-t="${t.t.replace(/"/g,"&quot;")}"
+      style="animation-delay:${Math.min(i*12,400)}ms">${t.t}</button>`;
+  }).join("");
+}
+document.getElementById("cloud").addEventListener("click",e=>{
+  const b=e.target.closest(".tag");if(!b)return;
+  const t=b.dataset.t,cur=S.tag[t]||"";
+  const nxt=cur===""?"g":cur==="g"?"r":"";
+  if(nxt)S.tag[t]=nxt;else delete S.tag[t];
+  save();
+  b.classList.remove("g","r");if(nxt)b.classList.add(nxt);
+  refresh();
+});
+
+/* ---------- live status ---------- */
+function counts(){
+  let g=0,r=0;
+  Object.values(S.tag).forEach(v=>{if(v==="g")g++;else if(v==="r")r++;});
+  return{g,r};
+}
+function refresh(){
+  const{g,r}=counts(),tot=TAGS.length;
+  document.getElementById("cloudCount").textContent=
+    (g||r)?g+" ירוקים · "+r+" אדומים · "+(g+r)+"/"+tot:"0/"+tot+" סומנו";
+  renderLive();
+}
+
+/* ---------- prompt sections ---------- */
+function sections(){
+  const g=TAGS.filter(t=>S.tag[t.t]==="g"),r=TAGS.filter(t=>S.tag[t.t]==="r");
+  const secs=[];
+  secs.push({cls:"",label:"מי אני",
+    why:"פותח את השיחה ונותן לעוזר את ההקשר — בלי זה הוא מנחש.",
+    text:"אני לומדת לקראת רישיון סוכן ביטוח פנסיוני בישראל (בחינות רשות ניירות ערך ורשות שוק ההון), ואני רוצה שתלמד אותי."});
+  if(g.length)secs.push({cls:"gg",label:"המושגים הירוקים — העוגנים",
+    why:"אלה לא סתם רשימה: העוזר מתבקש להשתמש בהם כדוגמאות מוכרות שדרכן מסבירים את החדש.",
+    text:"מושגים שאני כבר שולטת בהם, ואפשר להשתמש בהם כדוגמאות וכנקודת פתיחה להסברים:\n"+g.map(t=>"· "+t.t).join("\n")});
+  if(r.length)secs.push({cls:"rr",label:"המושגים האדומים — היעד",
+    why:"זה סדר העבודה של השיחה. העוזר יתמקד רק כאן, ולא יבזבז זמן על מה שכבר יושב.",
+    text:"מושגים שאני מתקשה בהם — כאן אני צריכה את העבודה:\n"+r.map(t=>"· "+t.t).join("\n")});
+  if(g.length&&r.length)secs.push({cls:"",label:"הגשר — הלב של הבקשה",
+    why:"ההוראה החשובה ביותר: לחבר כל מושג חדש למשהו שהיא כבר מבינה. כך נבנית הבנה, לא שינון.",
+    text:"כשאתה מסביר מושג אדום, עגן את ההסבר במושגים הירוקים שלי: התחל ממושג ירוק קרוב, הראה מה דומה ומה שונה, ורק אז הוסף את החדש. גשר מהמוכר אל הלא־מוכר."});
+  const w=WANTS.filter(x=>S.want[x.k]);
+  if(w.length)secs.push({cls:"",label:"מה ביקשתי לשיחה הזו",
+    why:"מכוון את סוג המפגש — הסבר, מבחן, חישובים או חזרה.",
+    text:"מה אני רוצה מהשיחה הזו:\n"+w.map(x=>"· "+x.n+" — "+x.d).join("\n")});
+  const sy=STYLES.filter(x=>S.style[x.k]);
+  if(sy.length)secs.push({cls:"",label:"איך ללמד אותי",
+    why:"סגנון העבודה — כדי שהשיחה תרגיש מותאמת ולא גנרית.",
+    text:"איך אני רוצה שתעבוד איתי: "+sy.map(x=>x.n).join(", ")+"."});
+  const n=(S.notes||"").trim();
+  if(n)secs.push({cls:"",label:"מה שהוספת בעצמך",
+    why:"טקסט חופשי שכתבת — עובר כמו שהוא.",
+    text:"עוד משהו שחשוב שתדע: "+n.slice(0,600)});
+  secs.push({cls:"",label:"כללי הפורמט",
+    why:"שומר שהתרגול ייראה כמו הבחינה האמיתית, ושהעוזר יהיה ישר לגבי מגבלותיו.",
+    text:"כשאתה בונה תרגול, שמור על פורמט הבחינה: שאלה אמריקאית עם ארבע תשובות (א–ד), אחת נכונה, שאלה אחת בכל פעם, והסבר אחרי כל תשובה. בשאלות חישוביות, אחרי שעניתי הצג את דרך החישוב המלאה שלב־שלב: אילו נתונים לוקחים מהשאלה, איזו נוסחה מפעילים, מה מציבים בכל שלב, ואיך מגיעים לתוצאה — ואם טעיתי, הראה לי באיזה שלב בדיוק הטעות שלי. אלה שאלות שאתה מנסח — אל תציג אותן כשחזור בחינות רשמיות. סכומים ותקרות מתעדכנים בכל שנה — ציין מתי צריך לאמת מול פרסום רשמי."});
+  secs.push({cls:"",label:"הצעד הראשון",
+    why:"פותח את השיחה בפעולה במקום בשאלות חוזרות.",
+    text:"נתחיל: בחר מושג אחד אדום, הסבר לי אותו דרך מושג ירוק קרוב, ואז שאל אותי שאלה אחת לבדוק שהבנתי."});
+  return secs;
+}
+function buildPrompt(){return sections().map(s=>s.text).join("\n\n");}
+let prevSecs={};
+function renderLive(){
+  const secs=sections();
+  const box=document.getElementById("liveBox");
+  box.innerHTML=secs.map(s=>{
+    const changed=prevSecs[s.label]!==undefined&&prevSecs[s.label]!==s.text;
+    return `<span class="seg${changed?" flash":""}">${s.text.replace(/</g,"&lt;")}</span>\n\n`;
+  }).join("");
+  prevSecs=Object.fromEntries(secs.map(s=>[s.label,s.text]));
+  const P=buildPrompt();
+  document.getElementById("liveLen").textContent=P.length+" תווים";
+}
+
+/* ---------- copy ---------- */
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true;}
+  catch(e){const a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";
+    document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand("copy");}catch(e2){}
+    document.body.removeChild(a);return ok;}
+}
+document.getElementById("copyBtn").addEventListener("click",async function(){
+  const ok=await copyText(buildPrompt());
+  this.textContent=ok?"הועתק — הדביקי אצל עוזר הלימוד":"לא הצלחתי להעתיק";
+  this.classList.toggle("ok",ok);
+  setTimeout(()=>{this.textContent="העתקת הבקשה";this.classList.remove("ok");},2600);
+});
+
+/* ---------- session choices ---------- */
+function renderChoices(){
+  document.getElementById("wantRow").innerHTML=WANTS.map(w=>
+    `<button class="choice${S.want[w.k]?" on":""}" data-k="${w.k}">
+      <span class="cn">${w.n}</span><span class="cd">${w.d}</span></button>`).join("");
+  document.getElementById("styleRow").innerHTML=STYLES.map(w=>
+    `<button class="choice${S.style[w.k]?" on":""}" data-k="${w.k}">
+      <span class="cn">${w.n}</span><span class="cd">${w.d}</span></button>`).join("");
+}
+document.getElementById("wantRow").addEventListener("click",e=>{
+  const b=e.target.closest(".choice");if(!b)return;
+  S.want[b.dataset.k]=!S.want[b.dataset.k];save();renderChoices();renderLive();
+});
+document.getElementById("styleRow").addEventListener("click",e=>{
+  const b=e.target.closest(".choice");if(!b)return;
+  S.style[b.dataset.k]=!S.style[b.dataset.k];save();renderChoices();renderLive();
+});
+
+/* ---------- notes ---------- */
+const nEl=document.getElementById("notes"),sMsg=document.getElementById("savedMsg");
+nEl.value=S.notes||"";
+let nT;
+nEl.addEventListener("input",()=>{
+  S.notes=nEl.value;clearTimeout(nT);
+  nT=setTimeout(()=>{save();renderLive();sMsg.classList.add("on");
+    setTimeout(()=>sMsg.classList.remove("on"),1400);},450);
+});
+
+
+
+/* ---------- reset ---------- */
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  if(!confirm("לאפס את כל הסימונים וההעדפות?"))return;
+  S={tag:{},want:{},style:{},notes:""};save();
+  nEl.value="";prevSecs={};renderCloud();renderChoices();refresh();closeSheet();
+});
+
+/* ---------- init ---------- */
+renderFilters();renderCloud();renderChoices();refresh();renderLive();
+
+</script>
+</body>
+</html>
