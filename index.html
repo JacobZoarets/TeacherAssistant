@@ -425,6 +425,14 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
 .gsec.gq{background:rgba(255,255,255,.55);border-style:dashed}
 .gsec.gq p{font-size:13px;color:var(--mut);line-height:1.75}
 
+/* ---------- hidden seal ---------- */
+.seal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.3) rotate(-20deg);
+  font-size:64px;color:#B0486C;opacity:0;pointer-events:none;z-index:90;
+  text-shadow:0 6px 30px rgba(176,72,108,.35);
+  transition:opacity .9s ease,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.seal.show{opacity:.85;transform:translate(-50%,-50%) scale(1) rotate(0deg)}
+
+.solbox.insol{margin-top:0;border:0;box-shadow:none;background:transparent}
 /* ---------- prefs popover ---------- */
 .pop{position:fixed;top:14%;left:50%;transform:translateX(-50%) scale(.92);z-index:50;
   width:min(320px,calc(100vw - 40px));background:linear-gradient(178deg,#FFFFFF 0%,var(--sky-xl) 100%);
@@ -448,21 +456,7 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
 .popSave{width:100%;margin-top:16px;padding:12px 18px;font-size:14px}
 
 /* ---------- warm ambience ---------- */
-.blob{transition:opacity 6s ease,filter 6s ease}
-body.lea{background:
-  radial-gradient(65% 42% at 90% -10%, rgba(216,148,178,.34) 0%, rgba(216,148,178,0) 65%),
-  radial-gradient(50% 36% at -8% 6%, rgba(196,110,140,.16) 0%, rgba(196,110,140,0) 65%),
-  radial-gradient(75% 45% at 50% 115%, rgba(186,104,142,.14) 0%, rgba(186,104,142,0) 70%),
-  linear-gradient(170deg,#FFFEFF 0%,#FBF4F8 100%)}
-body.lea .b1{background:radial-gradient(circle,rgba(220,150,185,.5),transparent 70%)}
-body.lea .b2{opacity:.7;background:radial-gradient(circle,rgba(196,100,138,.3),transparent 70%)}
-body.lea .b3{background:radial-gradient(circle,rgba(205,135,170,.24),transparent 70%)}
-body.lea .player{background:rgba(255,255,255,.92);border-color:rgba(240,214,226,.95);
-  box-shadow:0 24px 60px -30px rgba(140,50,90,.35), 0 2px 10px -4px rgba(140,50,90,.08)}
-body.lea .qbar i{background:linear-gradient(to left,var(--burg),#D98CA6)}
-body.lea .qbar{background:#F4E4EC}
-body.lea .optbtn{background:rgba(255,255,255,.92)}
-body.lea .optbtn:not(.done):hover{border-color:#DCA8BE}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.blob{display:none}}
 .cloudwrap{flex:1.15 1 0;min-height:0;min-width:0;max-width:100%;display:flex;flex-direction:column;
   animation:drop .7s .07s cubic-bezier(.2,.8,.2,1) backwards}
@@ -530,6 +524,12 @@ body.lea .optbtn:not(.done):hover{border-color:#DCA8BE}
 </div>
 
 <div class="scrim" id="scrim"></div>
+
+<div class="pop popwide" id="sh-sol">
+  <div class="sh-grab"><i></i></div>
+  <div class="sh-head"><h3 id="solTitle">הסבר</h3><button class="x" data-close>✕</button></div>
+  <div class="sh-body" id="solWrap"></div>
+</div>
 
 <div class="pop popwide" id="sh-guide">
   <div class="sh-grab"><i></i></div>
@@ -645,9 +645,62 @@ function renderPlayer(){
         <button class="qbtn" id="hintBtn">הדרכה — בלי לחשוף</button>
         <button class="qbtn ghost" id="revealBtn">פתרון מלא — חושף</button>
       </div>`:"")
-    +((pick||revealed)?(()=>{
-      const ok=pick?isRight(q,pick):null,last=(S.qi.all||0)===qs.length-1;
-      return `<div class="solbox ${pick?(ok?"okk":"nok"):"rvl"}">
+    +((pick||revealed)?`<div class="deepen"><button class="qbtn" id="solOpen">הסבר מלא</button></div>`:"");
+  document.getElementById("dots").innerHTML=qs.map((x,ii)=>{
+    const pk=S.picked[x.ex+"-"+x.n];
+    let c=pk?(isRight(x,pk)?" g":" r"):(S.revealed&&S.revealed[x.ex+"-"+x.n]?" b":"");
+    return `<button class="dot2${c}${ii===qi?" cur":""}" data-i="${ii}"></button>`;
+  }).join("");
+  document.getElementById("prevQ").disabled=qi===0;
+  document.getElementById("nextQ").disabled=qi===qs.length-1;
+}
+document.getElementById("qArea").addEventListener("click",async e=>{
+  if(e.target.closest("#solOpen")){
+    if(renderSol())openSheet("sol");return;
+  }
+  if(e.target.closest("#hintBtn")){
+    renderGuide();openSheet("guide");return;
+  }
+  if(e.target.closest("#revealBtn")){
+    const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
+    S.revealed=S.revealed||{};S.revealed[q.ex+"-"+q.n]=1;save();
+    renderPlayer();
+    if(renderSol())openSheet("sol");
+    return;
+  }
+  const b=e.target.closest(".optbtn");if(!b||b.classList.contains("done"))return;
+  const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
+  if(S.revealed&&S.revealed[q.ex+"-"+q.n])return;
+  S.picked[q.ex+"-"+q.n]=b.dataset.l;save();
+  renderPlayer();
+  if(renderSol())openSheet("sol");
+});
+document.getElementById("dots").addEventListener("click",e=>{
+  const d=e.target.closest(".dot2");if(!d)return;
+  S.qi.all=+d.dataset.i;save();renderPlayer();
+});
+document.getElementById("prevQ").addEventListener("click",()=>{
+  S.qi.all=Math.max(0,(S.qi.all||0)-1);save();renderPlayer();
+});
+document.getElementById("restartEx").addEventListener("click",()=>{
+  if(!confirm("להתחיל את כל התרגול מחדש? כל התשובות יימחקו."))return;
+  S.picked={};S.revealed={};
+  S.qi.all=0;save();renderPlayer();
+});
+document.getElementById("nextQ").addEventListener("click",()=>{
+  S.qi.all=Math.min(exQs().length-1,(S.qi.all||0)+1);save();renderPlayer();
+});
+renderPlayer();
+
+
+/* ---------- solution overlay ---------- */
+function renderSol(){
+  const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
+  const key=q.ex+"-"+q.n,pick=S.picked[key],revealed=!pick&&S.revealed&&S.revealed[key];
+  if(!pick&&!revealed)return false;
+  const ok=pick?isRight(q,pick):null,last=(S.qi.all||0)===qs.length-1;
+  document.getElementById("solTitle").textContent="שאלה "+q.n+" · מועד "+q.ex;
+  document.getElementById("solWrap").innerHTML=`<div class="solbox insol ${pick?(ok?"okk":"nok"):"rvl"}">
         <div class="solhead">
           <span class="solmark">${pick?(ok?"✓":"✕"):"☰"}</span>
           <div class="soltit">
@@ -667,29 +720,14 @@ function renderPlayer(){
           <div class="whyall hidden">${Object.entries(WHY[key]).filter(([L])=>L!==pick).map(([L,t])=>
             `<p><b>${L}.</b> ${fx(t)}</p>`).join("")}</div>
         </div>`:""}
-
         <div class="solfoot">
           <span class="solnote">ההסבר נכתב מראש ונבדק מול המפתח הרשמי של הרשות.</span>
           ${last?"":'<button class="nextsol" id="nextFromSol">לשאלה הבאה ←</button>'}
         </div>
-      </div>`;})():"");
-  document.getElementById("dots").innerHTML=qs.map((x,ii)=>{
-    const pk=S.picked[x.ex+"-"+x.n];
-    let c=pk?(isRight(x,pk)?" g":" r"):(S.revealed&&S.revealed[x.ex+"-"+x.n]?" b":"");
-    return `<button class="dot2${c}${ii===qi?" cur":""}" data-i="${ii}"></button>`;
-  }).join("");
-  document.getElementById("prevQ").disabled=qi===0;
-  document.getElementById("nextQ").disabled=qi===qs.length-1;
+      </div>`;
+  return true;
 }
-document.getElementById("qArea").addEventListener("click",async e=>{
-  if(e.target.closest("#hintBtn")){
-    renderGuide();openSheet("guide");return;
-  }
-  if(e.target.closest("#revealBtn")){
-    const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
-    S.revealed=S.revealed||{};S.revealed[q.ex+"-"+q.n]=1;save();
-    renderPlayer();return;
-  }
+document.getElementById("solWrap").addEventListener("click",e=>{
   const wb=e.target.closest(".whyall-btn");
   if(wb){
     const list=wb.nextElementSibling;list.classList.toggle("hidden");
@@ -697,30 +735,10 @@ document.getElementById("qArea").addEventListener("click",async e=>{
     return;
   }
   if(e.target.closest("#nextFromSol")){
-    S.qi.all=Math.min(exQs().length-1,(S.qi.all||0)+1);save();renderPlayer();return;
+    S.qi.all=Math.min(exQs().length-1,(S.qi.all||0)+1);save();
+    closeSheet();renderPlayer();
   }
-  const b=e.target.closest(".optbtn");if(!b||b.classList.contains("done"))return;
-  const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
-  if(S.revealed&&S.revealed[q.ex+"-"+q.n])return;
-  S.picked[q.ex+"-"+q.n]=b.dataset.l;save();
-  renderPlayer();
 });
-document.getElementById("dots").addEventListener("click",e=>{
-  const d=e.target.closest(".dot2");if(!d)return;
-  S.qi.all=+d.dataset.i;save();renderPlayer();
-});
-document.getElementById("prevQ").addEventListener("click",()=>{
-  S.qi.all=Math.max(0,(S.qi.all||0)-1);save();renderPlayer();
-});
-document.getElementById("restartEx").addEventListener("click",()=>{
-  if(!confirm("להתחיל את כל התרגול מחדש? כל התשובות יימחקו."))return;
-  S.picked={};S.revealed={};
-  S.qi.all=0;save();renderPlayer();
-});
-document.getElementById("nextQ").addEventListener("click",()=>{
-  S.qi.all=Math.min(exQs().length-1,(S.qi.all||0)+1);save();renderPlayer();
-});
-renderPlayer();
 
 /* ---------- guide overlay ---------- */
 function renderGuide(){
@@ -763,6 +781,26 @@ let pnT;
 document.getElementById("prefName").addEventListener("input",function(){
   S.name=this.value;clearTimeout(pnT);pnT=setTimeout(()=>{save();leaMode();renderPlayer();},400);
 });
+
+/* ---------- hidden seal ---------- */
+(function(){
+  const h1=document.querySelector(".hd h1");if(!h1)return;
+  let t=null;
+  function bloom(){
+    if(!document.body.classList.contains("lea"))return;
+    const f=document.createElement("div");
+    f.className="seal";f.textContent="❀";
+    document.body.appendChild(f);
+    setTimeout(()=>f.classList.add("show"),20);
+    setTimeout(()=>{f.classList.remove("show");setTimeout(()=>f.remove(),900);},2400);
+  }
+  const start=()=>{t=setTimeout(bloom,3000);};
+  const stop=()=>{if(t){clearTimeout(t);t=null;}};
+  h1.addEventListener("touchstart",start,{passive:true});
+  h1.addEventListener("touchend",stop);h1.addEventListener("touchmove",stop);
+  h1.addEventListener("mousedown",start);
+  h1.addEventListener("mouseup",stop);h1.addEventListener("mouseleave",stop);
+})();
 
 /* ---------- init ---------- */
 applyPrefs();
