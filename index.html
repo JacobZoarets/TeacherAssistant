@@ -399,6 +399,7 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
 .sheet{z-index:50}.scrim{z-index:40}
 
 .qtext{animation:qin .5s cubic-bezier(.2,.8,.2,1) backwards}
+.noanim .qtext,.noanim .optbtn,.noanim .deepen{animation:none!important}
 .optbtn{animation:qin .5s cubic-bezier(.2,.8,.2,1) backwards}
 @keyframes qin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .optbtn:not(.done):hover{transform:translateY(-1px);box-shadow:0 8px 18px -12px rgba(22,52,92,.3)}
@@ -425,6 +426,11 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
 .gsec.gme{background:var(--sky-l);border-color:#CFE2F4}
 .gsec.gq{background:rgba(255,255,255,.55);border-style:dashed}
 .gsec.gq p{font-size:13px;color:var(--mut);line-height:1.75}
+.fmt .qsent{display:block;margin-bottom:5px}
+.fmt .qnum{font-weight:600;color:var(--navy)}
+.fmt .qkey{background:rgba(78,143,199,.14);color:var(--navy);border-radius:4px;padding:0 3px}
+.fmt .gopt{margin:5px 0;padding:3px 8px;border-radius:8px;background:rgba(255,255,255,.6)}
+.fmt .gopt b{color:var(--navy2)}
 .gsec.gq .solopt{margin:4px 0;padding:2px 8px;border-radius:8px}
 .gsec.gq .solopt b{color:var(--faint)}
 .gsec.gq .solright{background:rgba(47,125,107,.09);color:var(--ok)}
@@ -625,7 +631,10 @@ const FB_NO=["לא הפעם","כמעט","מלכודת מוכרת","שווה עו
 const TL_OK=["נכון, יפה מאוד","מדויק — ככה זה נראה","עוד נושא שמתייצב","תשובה נכונה, בביטחון","הכיוון הנכון לגמרי"];
 const TL_NO=["לא מדויק הפעם","זו מלכודת מוכרת — עכשיו היא שלך","כמעט, וזה החלק שלומדים ממנו","טעות ששווה זהב עכשיו","לא נורא — בשביל זה מתרגלים"];
 function fbPick(arr,key){let h=0;for(const c of key)h=(h*31+c.charCodeAt(0))>>>0;return arr[h%arr.length];}
-function renderPlayer(){
+function renderPlayer(anim){
+  const qa_=document.getElementById("qArea");
+  const keepScroll=anim===false?qa_.scrollTop:0;
+  qa_.classList.toggle("noanim",anim===false);
   const qs=exQs(),qi=Math.min(S.qi.all||0,qs.length-1),q=qs[qi];
   const key=q.ex+"-"+q.n,pick=S.picked[key],revealed=!pick&&S.revealed&&S.revealed[key];
   const exArr=qs.filter(x=>x.ex===q.ex);
@@ -666,6 +675,7 @@ function renderPlayer(){
   }).join("");
   document.getElementById("prevQ").disabled=qi===0;
   document.getElementById("nextQ").disabled=qi===qs.length-1;
+  if(anim===false)qa_.scrollTop=keepScroll;
 }
 document.getElementById("qArea").addEventListener("click",async e=>{
   if(e.target.closest("#solOpen")){
@@ -677,7 +687,7 @@ document.getElementById("qArea").addEventListener("click",async e=>{
   if(e.target.closest("#revealBtn")){
     const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
     S.revealed=S.revealed||{};S.revealed[q.ex+"-"+q.n]=1;save();
-    renderPlayer();
+    renderPlayer(false);
     if(renderSol())openSheet("sol");
     return;
   }
@@ -685,7 +695,7 @@ document.getElementById("qArea").addEventListener("click",async e=>{
   const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
   if(S.revealed&&S.revealed[q.ex+"-"+q.n])return;
   S.picked[q.ex+"-"+q.n]=b.dataset.l;save();
-  renderPlayer();
+  renderPlayer(false);
   if(renderSol())openSheet("sol");
 });
 document.getElementById("dots").addEventListener("click",e=>{
@@ -714,7 +724,7 @@ function renderSol(){
   if(!pick&&!revealed)return false;
   const ok=pick?isRight(q,pick):null,last=(S.qi.all||0)===qs.length-1;
   document.getElementById("solTitle").textContent="שאלה "+q.n+" · מועד "+q.ex;
-  document.getElementById("solWrap").innerHTML=`<div class="gsec gq"><span class="sollbl">השאלה</span><p>${q.q}</p>
+  document.getElementById("solWrap").innerHTML=`<div class="gsec gq fmt"><span class="sollbl">השאלה</span><p>${fmtQ(q.q)}</p>
       ${Object.entries(q.o).map(([L,t])=>{
         let m="";
         if(q.a.includes(L))m=" solright";else if(L===pick)m=" solwrong";
@@ -760,13 +770,34 @@ document.getElementById("solWrap").addEventListener("click",e=>{
   }
 });
 
+
+/* ---------- didactic question formatting ---------- */
+const QKEYS=["תחרות משוכללת","עלות אלטרנטיבית","ההוצאה השולית האלטרנטיבית","עקומת התמורה","עקומת תמורה",
+ "תפוקה השולית","תפוקה שולית","שיווי משקל","תעסוקה מלאה","פער דפלציוני","פער אינפלציוני",
+ "גמישות הביקוש","גמישות ההיצע","גמישות","מכסת יבוא","מחיר מינימום","מחיר מקסימום","מוצר נחות","מוצר נורמלי",
+ "משק סגור","משק פתוח","משק קטן","הכנסה פנויה","הכנסה מזכה","תוצר לאומי נקי","תוצר לאומי","המכפיל הקיינסיאני",
+ "יחס הרזרבה","אמצעי התשלום","מאזן התשלומים","החשבון השוטף","חשבון השוטף","תשלומי העברה","הוצאות הובלה",
+ "עודף יבוא","עודף יצוא","גירעון בתקציב","הבנק המרכזי","בנק מרכזי","שער חליפין","סובסידיה","מכס","אג\"ח","ריבית"];
+function fmtQ(t){
+  if(!t)return"";
+  let out=t;
+  out=out.replace(/([.?]) (?=[א-ת(])/g,"$1</span><span class=\"qsent\">");
+  out="<span class=\"qsent\">"+out+"</span>";
+  out=out.replace(/(\d[\d,]*(?:\.\d+)?(?:%| ש"ח| ₪| מיליון דולר| מיליארד ש"ח| מיליון| מיליארד| דולר| טון| ק"ג| יחידות| פועלים| זוז)?)/g,'<b class="qnum">$1</b>');
+  for(const k of QKEYS){
+    out=out.replace(new RegExp("(^|[^א-ת>])("+k.replace(/"/g,'\\"')+")(?=$|[^א-ת<])","g"),'$1<mark class="qkey">$2</mark>');
+  }
+  return out;
+}
+
 /* ---------- guide overlay ---------- */
 function renderGuide(){
   const qs=exQs(),q=qs[Math.min(S.qi.all||0,qs.length-1)];
   const key=q.ex+"-"+q.n,T=GTYPES[GTYPE[key]]||{};
   document.getElementById("gTitle").textContent="הדרכה · שאלה "+q.n+" · מועד "+q.ex;
   document.getElementById("guideBody").innerHTML=
-    '<div class="gsec gq"><span class="sollbl">השאלה</span><p>'+q.q+'</p></div>'
+    '<div class="gsec gq fmt"><span class="sollbl">השאלה</span><p>'+fmtQ(q.q)+'</p>'
+   +Object.entries(q.o).map(([L,t])=>'<p class="gopt"><b>'+L+'.</b> '+fmtQ(t)+'</p>').join("")+'</div>'
    +'<div class="gsec"><span class="sollbl">מה בעצם שואלים</span><p>'+fx(GWHAT[key]||"")+'</p></div>'
    +'<div class="gsec"><span class="sollbl">על שאלות מהסוג הזה</span><p>'+fx(T.t||"")+'</p></div>'
    +'<div class="gsec"><span class="sollbl">מה כדאי לזכור</span><p>'+fx(T.r||"")+'</p></div>'
