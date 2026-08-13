@@ -418,6 +418,14 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
 .navb:not(:disabled):active,.editbtn:active{transform:scale(.96)}
 .tag{animation-duration:.45s}
 
+/* ---------- warm ambience ---------- */
+.blob{transition:opacity 6s ease,filter 6s ease}
+body.lea .b1{background:radial-gradient(circle,rgba(214,164,196,.5),transparent 70%)}
+body.lea .b2{opacity:.8;background:radial-gradient(circle,rgba(196,110,140,.34),transparent 70%)}
+body.lea .b3{background:radial-gradient(circle,rgba(200,140,168,.26),transparent 70%)}
+body.lea .qbar i{background:linear-gradient(to left,var(--burg),#D98CA6)}
+body.lea .sh-grab i{background:#EFD3DE}
+body.lea .ring #ringG{stroke:#B0486C}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.blob{display:none}}
 .cloudwrap{flex:1.15 1 0;min-height:0;min-width:0;max-width:100%;display:flex;flex-direction:column;
   animation:drop .7s .07s cubic-bezier(.2,.8,.2,1) backwards}
@@ -855,7 +863,12 @@ document.getElementById("cloudReset").addEventListener("click",()=>{
 });
 
 /* ---------- preferences ---------- */
+function leaMode(){
+  const n=(S.name||"").trim();
+  document.body.classList.toggle("lea",n==="לאה"||n==="לאה'לה"||n==="Leah"||n==="leah");
+}
 function applyPrefs(){
+  leaMode();
   document.getElementById("hdSub").textContent=G(
    "שאלות אמיתיות מהבחינות שפרסמה רשות ניירות ערך — עני, קבלי בדיקה מיידית מול המפתח הרשמי, והסבר מלא",
    "שאלות אמיתיות מהבחינות שפרסמה רשות ניירות ערך — ענה, קבל בדיקה מיידית מול המפתח הרשמי, והסבר מלא");
@@ -871,13 +884,13 @@ document.querySelectorAll(".gsel").forEach(b=>b.addEventListener("click",()=>{
   S.gender=b.dataset.g;save();applyPrefs();
 }));
 document.getElementById("nameClear").addEventListener("click",()=>{
-  S.name="";save();
+  S.name="";save();leaMode();
   document.getElementById("prefName").value="";
   renderPlayer();
 });
 let pnT;
 document.getElementById("prefName").addEventListener("input",function(){
-  S.name=this.value;clearTimeout(pnT);pnT=setTimeout(()=>{save();renderPlayer();},400);
+  S.name=this.value;clearTimeout(pnT);pnT=setTimeout(()=>{save();leaMode();renderPlayer();},400);
 });
 
 /* ---------- init ---------- */
