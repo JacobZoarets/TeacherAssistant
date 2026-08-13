@@ -628,16 +628,18 @@ function fbPick(arr,key){let h=0;for(const c of key)h=(h*31+c.charCodeAt(0))>>>0
 function renderPlayer(){
   const qs=exQs(),qi=Math.min(S.qi.all||0,qs.length-1),q=qs[qi];
   const key=q.ex+"-"+q.n,pick=S.picked[key],revealed=!pick&&S.revealed&&S.revealed[key];
-  const answered=qs.filter(x=>S.picked[x.ex+"-"+x.n]);
+  const exArr=qs.filter(x=>x.ex===q.ex);
+  const pos=exArr.findIndex(x=>x.n===q.n)+1;
+  const answered=exArr.filter(x=>S.picked[x.ex+"-"+x.n]);
   const right=answered.filter(x=>isRight(x,S.picked[x.ex+"-"+x.n])).length;
-  document.getElementById("pPos").textContent="שאלה "+(qi+1)+" מתוך "+qs.length+" · מועד "+q.ex;
+  document.getElementById("pPos").textContent="שאלה "+pos+" מתוך "+exArr.length+" · מבחן "+q.ex;
   const sc=document.getElementById("pScore");
   const grade=answered.length?Math.round(right/answered.length*100):0;
   const newTxt=answered.length?right+"/"+answered.length+" · ציון "+grade:"";
   if(sc.textContent!==newTxt&&newTxt){sc.classList.remove("score-pop");void sc.offsetWidth;sc.classList.add("score-pop");}
   sc.textContent=newTxt;
   sc.classList.toggle("fail",answered.length>0&&grade<60);
-  document.getElementById("pBar").style.width=(answered.length/qs.length*100)+"%";
+  document.getElementById("pBar").style.width=(answered.length/exArr.length*100)+"%";
   document.getElementById("qArea").innerHTML=
     `<div class="qtext">${q.q}</div>`
     +Object.entries(q.o).map(([L,t])=>{
@@ -694,9 +696,10 @@ document.getElementById("prevQ").addEventListener("click",()=>{
   S.qi.all=Math.max(0,(S.qi.all||0)-1);save();renderPlayer();
 });
 document.getElementById("restartEx").addEventListener("click",()=>{
-  if(!confirm("להתחיל את כל התרגול מחדש? כל התשובות יימחקו."))return;
-  S.picked={};S.revealed={};
-  S.qi.all=0;save();renderPlayer();
+  const cur=exQs()[Math.min(S.qi.all||0,exQs().length-1)].ex;
+  if(!confirm("להתחיל את מבחן "+cur+" מחדש? התשובות שסומנו בו יימחקו."))return;
+  exQs().filter(x=>x.ex===cur).forEach(x=>{delete S.picked[x.ex+"-"+x.n];if(S.revealed)delete S.revealed[x.ex+"-"+x.n];});
+  S.qi.all=exQs().findIndex(x=>x.ex===cur);save();renderPlayer();
 });
 document.getElementById("nextQ").addEventListener("click",()=>{
   S.qi.all=Math.min(exQs().length-1,(S.qi.all||0)+1);save();renderPlayer();
