@@ -364,10 +364,7 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
   border:1px solid var(--line);background:#fff;transition:.25s}
 .navb:disabled{opacity:.35}
 .navb:not(:disabled):hover{border-color:var(--sky)}
-.dots{flex:1;display:flex;flex-direction:column;gap:3px;justify-content:center;min-width:0}
-.maprow{display:flex;align-items:center;gap:6px;min-width:0}
-.maplbl{flex:0 0 auto;font-size:8.5px;color:var(--faint);letter-spacing:.02em;width:44px;text-align:end;white-space:nowrap}
-.mapcells{flex:1;display:grid;grid-template-columns:repeat(20,1fr);gap:2px;min-width:0}
+.dots{flex:1;display:grid;grid-template-columns:repeat(20,1fr);gap:2px;align-content:center}
 .dot2{height:9px;min-width:0;border-radius:3px;background:var(--line);transition:background .3s,box-shadow .2s;padding:0}
 .dot2.g{background:var(--ok)}
 .dot2.r{background:var(--burg)}
@@ -554,6 +551,8 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
     <input type="text" id="prefName" maxlength="20" placeholder="" class="nameinput">
     <button class="nameclear" id="nameClear" title="מחיקת השם">✕</button>
   </span>
+  <div class="eyebrow" style="display:block;margin:18px 2px 8px">מבחן</div>
+  <select id="examSel" class="nameinput" style="max-width:280px"></select>
   <div class="eyebrow" style="display:block;margin:18px 2px 8px">פנייה</div>
   <div class="lvrow" style="gap:7px">
     <button class="lv gsel" data-g="f" style="font-size:13px;padding:8px 18px">בת</button>
@@ -601,7 +600,10 @@ function closeSheet(){
   scrim.classList.remove("on");
 }
 scrim.addEventListener("click",closeSheet);
-document.querySelectorAll("[data-sheet]").forEach(b=>b.addEventListener("click",()=>openSheet(b.dataset.sheet)));
+document.querySelectorAll("[data-sheet]").forEach(b=>b.addEventListener("click",()=>{
+  if(b.dataset.sheet==="prefs")applyPrefs();
+  openSheet(b.dataset.sheet);
+}));
 document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheet));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
 
@@ -655,15 +657,10 @@ function renderPlayer(){
         <button class="qbtn ghost" id="revealBtn">פתרון מלא — חושף</button>
       </div>`:"")
     +((pick||revealed)?`<div class="deepen"><button class="qbtn" id="solOpen">הסבר מלא</button></div>`:"");
-  const exams=[...new Set(qs.map(x=>x.ex))];
-  document.getElementById("dots").innerHTML=exams.map(ex=>{
-    const rows=qs.map((x,ii)=>({x,ii})).filter(o=>o.x.ex===ex);
-    return `<div class="maprow"><span class="maplbl">${ex}</span><span class="mapcells">`+
-      rows.map(({x,ii})=>{
-        const pk=S.picked[x.ex+"-"+x.n];
-        let c=pk?(isRight(x,pk)?" g":" r"):(S.revealed&&S.revealed[x.ex+"-"+x.n]?" b":"");
-        return `<button class="dot2${c}${ii===qi?" cur":""}" data-i="${ii}"></button>`;
-      }).join("")+`</span></div>`;
+  document.getElementById("dots").innerHTML=qs.map((x,ii)=>{
+    const pk=S.picked[x.ex+"-"+x.n];
+    let c=pk?(isRight(x,pk)?" g":" r"):(S.revealed&&S.revealed[x.ex+"-"+x.n]?" b":"");
+    return `<button class="dot2${c}${ii===qi?" cur":""}" data-i="${ii}"></button>`;
   }).join("");
   document.getElementById("prevQ").disabled=qi===0;
   document.getElementById("nextQ").disabled=qi===qs.length-1;
@@ -784,6 +781,10 @@ function leaMode(){
 }
 function applyPrefs(){
   leaMode();
+  const qs=exQs(),cur=qs[Math.min(S.qi.all||0,qs.length-1)];
+  const sel=document.getElementById("examSel");
+  sel.innerHTML=[...new Set(qs.map(x=>x.ex))].map(ex=>
+    `<option value="${ex}"${ex===cur.ex?" selected":""}>מבחן כלכלה · מועד ${ex}</option>`).join("");
   document.querySelectorAll(".gsel").forEach(b=>b.classList.toggle("on",b.dataset.g===S.gender));
   document.getElementById("prefName").value=S.name||"";
   renderPlayer();
@@ -791,6 +792,10 @@ function applyPrefs(){
 document.getElementById("prefSave").addEventListener("click",()=>{
   S.name=document.getElementById("prefName").value;
   save();leaMode();renderPlayer();closeSheet();
+});
+document.getElementById("examSel").addEventListener("change",function(){
+  const qs=exQs(),i=qs.findIndex(x=>x.ex===this.value);
+  if(i>=0){S.qi.all=i;save();renderPlayer();closeSheet();}
 });
 document.querySelectorAll(".gsel").forEach(b=>b.addEventListener("click",()=>{
   S.gender=b.dataset.g;save();applyPrefs();
