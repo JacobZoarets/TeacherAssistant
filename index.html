@@ -362,11 +362,11 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
   border:1px solid var(--line);background:#fff;transition:.25s}
 .navb:disabled{opacity:.35}
 .navb:not(:disabled):hover{border-color:var(--sky)}
-.dots{flex:1;display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
-.dot2{width:9px;height:9px;border-radius:50%;background:var(--line);transition:.25s;padding:0}
+.dots{flex:1;display:flex;gap:1px;height:12px;align-items:stretch;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.5)}
+.dot2{flex:1;min-width:0;height:auto;border-radius:0;background:var(--line);transition:background .3s,transform .2s;padding:0}
 .dot2.g{background:var(--ok)}
 .dot2.r{background:var(--burg)}
-.dot2.cur{outline:2px solid var(--sky);outline-offset:1px}
+.dot2.cur{transform:scaleY(1.45);border-radius:3px;box-shadow:0 0 0 1px var(--navy2);z-index:1}
 .reset{font-size:11.5px;color:var(--faint);margin:18px auto 0;display:block;text-align:center}
 .reset:hover{color:var(--mut)}
 
@@ -406,8 +406,6 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
 .optbtn.wrong{animation:softdip .5s ease}
 @keyframes softdip{0%{transform:translateY(0)}35%{transform:translateY(2px)}100%{transform:none}}
 .solbox{animation:rise .55s cubic-bezier(.2,.8,.2,1)}
-.dot2{transition:background .4s,transform .3s}
-.dot2.cur{transform:scale(1.35)}
 .pmeta span:last-child{transition:.3s}
 .score-pop{animation:pop .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.18)}100%{transform:scale(1)}}
@@ -423,6 +421,8 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
 .gsec p{margin:0;font-size:14px;line-height:1.9;color:var(--txt)}
 .gsec .sollbl{margin-bottom:5px}
 .gsec.gme{background:var(--sky-l);border-color:#CFE2F4}
+.gsec.gq{background:rgba(255,255,255,.55);border-style:dashed}
+.gsec.gq p{font-size:13px;color:var(--mut);line-height:1.75}
 
 /* ---------- prefs popover ---------- */
 .pop{position:fixed;top:14%;left:50%;transform:translateX(-50%) scale(.92);z-index:50;
@@ -718,7 +718,8 @@ function renderGuide(){
   const key=q.ex+"-"+q.n,T=GTYPES[GTYPE[key]]||{};
   document.getElementById("gTitle").textContent="הדרכה · שאלה "+q.n+" · מועד "+q.ex;
   document.getElementById("guideBody").innerHTML=
-    '<div class="gsec"><span class="sollbl">מה בעצם שואלים</span><p>'+fx(GWHAT[key]||"")+'</p></div>'
+    '<div class="gsec gq"><span class="sollbl">השאלה</span><p>'+q.q+'</p></div>'
+   +'<div class="gsec"><span class="sollbl">מה בעצם שואלים</span><p>'+fx(GWHAT[key]||"")+'</p></div>'
    +'<div class="gsec"><span class="sollbl">על שאלות מהסוג הזה</span><p>'+fx(T.t||"")+'</p></div>'
    +'<div class="gsec"><span class="sollbl">מה כדאי לזכור</span><p>'+fx(T.r||"")+'</p></div>'
    +'<div class="gsec"><span class="sollbl">זיהוי מהיר ופתרון קל</span><p>'+fx(T.z||"")+'</p></div>'
