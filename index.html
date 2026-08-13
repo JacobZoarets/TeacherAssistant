@@ -364,7 +364,10 @@ textarea:focus{outline:none;border-color:var(--sky);background:#fff}
   border:1px solid var(--line);background:#fff;transition:.25s}
 .navb:disabled{opacity:.35}
 .navb:not(:disabled):hover{border-color:var(--sky)}
-.dots{flex:1;display:grid;grid-template-columns:repeat(20,1fr);gap:2px;align-content:center}
+.dots{flex:1;display:flex;flex-direction:column;gap:3px;justify-content:center;min-width:0}
+.maprow{display:flex;align-items:center;gap:6px;min-width:0}
+.maplbl{flex:0 0 auto;font-size:8.5px;color:var(--faint);letter-spacing:.02em;width:44px;text-align:end;white-space:nowrap}
+.mapcells{flex:1;display:grid;grid-template-columns:repeat(20,1fr);gap:2px;min-width:0}
 .dot2{height:9px;min-width:0;border-radius:3px;background:var(--line);transition:background .3s,box-shadow .2s;padding:0}
 .dot2.g{background:var(--ok)}
 .dot2.r{background:var(--burg)}
@@ -652,10 +655,15 @@ function renderPlayer(){
         <button class="qbtn ghost" id="revealBtn">פתרון מלא — חושף</button>
       </div>`:"")
     +((pick||revealed)?`<div class="deepen"><button class="qbtn" id="solOpen">הסבר מלא</button></div>`:"");
-  document.getElementById("dots").innerHTML=qs.map((x,ii)=>{
-    const pk=S.picked[x.ex+"-"+x.n];
-    let c=pk?(isRight(x,pk)?" g":" r"):(S.revealed&&S.revealed[x.ex+"-"+x.n]?" b":"");
-    return `<button class="dot2${c}${ii===qi?" cur":""}" data-i="${ii}"></button>`;
+  const exams=[...new Set(qs.map(x=>x.ex))];
+  document.getElementById("dots").innerHTML=exams.map(ex=>{
+    const rows=qs.map((x,ii)=>({x,ii})).filter(o=>o.x.ex===ex);
+    return `<div class="maprow"><span class="maplbl">${ex}</span><span class="mapcells">`+
+      rows.map(({x,ii})=>{
+        const pk=S.picked[x.ex+"-"+x.n];
+        let c=pk?(isRight(x,pk)?" g":" r"):(S.revealed&&S.revealed[x.ex+"-"+x.n]?" b":"");
+        return `<button class="dot2${c}${ii===qi?" cur":""}" data-i="${ii}"></button>`;
+      }).join("")+`</span></div>`;
   }).join("");
   document.getElementById("prevQ").disabled=qi===0;
   document.getElementById("nextQ").disabled=qi===qs.length-1;
